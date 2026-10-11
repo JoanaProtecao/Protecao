@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<title>Comparador de Seguros</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4fa834">
+<meta name="description" content="Comparador de seguros DS Seguros: plano mínimo de cada seguradora para o perfil do cliente.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Comparador DS">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: ferramenta de balcão — barra de ramos no topo, perfil do cliente, depois uma ficha por seguradora ordenada por adequação */
+:root{
+  --bg:#f3f5f8; --surface:#ffffff; --ink:#14233a; --muted:#5b6b82; --line:#d9e0ea;
+  --accent:#2f7d1e; --accent-soft:#e4f2dc;
+  --ok:#1f7a3f; --ok-soft:#e2f3e8; --opc:#8a5a00; --opc-soft:#fbefd5; --conf:#3b4f9a; --conf-soft:#e5e9f8; --no:#8f2d2d; --no-soft:#f6e3e3;
+  --display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1622; --surface:#172131; --ink:#e6ecf5; --muted:#9aa8bd; --line:#2a3850;
+  --accent:#7fcf5f; --accent-soft:#1d3317;
+  --ok:#6fd38f; --ok-soft:#173523; --opc:#f0c060; --opc-soft:#3a2e12; --conf:#9fb1f5; --conf-soft:#1f2848; --no:#f09a9a; --no-soft:#3d1c1c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1622; --surface:#172131; --ink:#e6ecf5; --muted:#9aa8bd; --line:#2a3850;
+  --accent:#7fcf5f; --accent-soft:#1d3317;
+  --ok:#6fd38f; --ok-soft:#173523; --opc:#f0c060; --opc-soft:#3a2e12; --conf:#9fb1f5; --conf-soft:#1f2848; --no:#f09a9a; --no-soft:#3d1c1c; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:16px 48px}
+header{display:flex;align-items:center;gap:12px;padding-block:8px 16px}
+.mark{width:44px;height:44px;border-radius:8px;flex:none;display:block}
+h1{font-family:var(--display);font-weight:800;font-size:22px;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--muted);font-size:13px;margin:0}
+nav{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:2;padding-top:6px}
+nav button{font:600 14px var(--body);color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 14px;white-space:nowrap;cursor:pointer}
+nav button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+nav button:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:14px}
+.panel h2{font-family:var(--display);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);font-weight:500}
+input[type=number],select{font:500 15px var(--body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%}
+.checks{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chk{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:14px;cursor:pointer;background:var(--bg)}
+.chk:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.chk input{accent-color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted);margin:16px 2px 8px}
+.results{display:flex;flex-direction:column;gap:10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.card.no{opacity:.72}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.ins{font-family:var(--display);font-weight:700;font-size:17px}
+.prod{color:var(--muted);font-size:13px}
+.pill{font-size:12px;font-weight:600;border-radius:999px;padding:3px 10px;white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}.pill.opc{background:var(--opc-soft);color:var(--opc)}
+.pill.conf{background:var(--conf-soft);color:var(--conf)}.pill.no{background:var(--no-soft);color:var(--no)}
+.plan{font-weight:600}
+.plan span{font-weight:400;color:var(--muted)}
+ul.facts{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:2px;font-size:14px}
+.notes{font-size:13px;color:var(--opc)}
+.src{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px}
+.src a{color:var(--accent)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+details.more{margin-top:6px}
+details.more summary{cursor:pointer;color:var(--muted);font-size:14px;padding:6px 2px}
+.todo h3{font-family:var(--display);font-size:16px;margin:0 0 6px}
+.todo ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.todo .panel{display:flex;flex-direction:column;gap:6px}
+.foot{margin-top:24px;font-size:12px;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.card{transition:opacity .15s}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img class="mark" src="data:image/png;base64,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" alt="DS Seguros">
+    <div>
+      <h1>Comparador de Seguros</h1>
+      <p class="sub">Dados públicos das seguradoras · recolhidos a 11/10/2026</p>
+    </div>
+  </header>
+
+  <nav role="tablist" id="tabs"></nav>
+  <main id="view"></main>
+
+  <p class="foot">Ferramenta de apoio ao mediador. Não dispensa a leitura da informação pré-contratual e contratual de cada seguradora. Os preços não estão incluídos.</p>
+</div>
+
+<script>
+const ST={ok:'Cumpre',opc:'Cumpre com opcional',conf:'Por confirmar',no:'Não cumpre'};
+const eur=n=>n==null?'—':n>=1e6?(n/1e6).toLocaleString('pt-PT')+' M€':n.toLocaleString('pt-PT')+' €';
+
+/* ---------- VIDA CRÉDITO ---------- */
+const VIDA=[
+ {ins:'Allianz',prod:'Allianz Vida Crédito',entryMax:null,data:'CG 08/2024',url:'https://www.allianz.pt/seguro-vida-credito.html',plans:[
+   {n:'Essencial',inv:[{t:'IAD',termo:75}],dg:null,exon:null,x:['Morte + IAD']},
+   {n:'Base',inv:[{t:'IAD',termo:75},{t:'ITP',pct:[60],termo:67}],dg:null,exon:null,x:['Morte + IAD + ITP 60%']}],
+   notes:['Idade máxima de entrada por confirmar']},
+ {ins:'Tranquilidade',prod:'Vida Crédito Casa 3.0',entryMax:null,data:'CG 10/2026',url:'https://www.generalitranquilidade.pt/particulares/seguros/vida/credito-de-casa',plans:[
+   {n:'Base',inv:[{t:'IAD',termo:85}],dg:null,exon:null,x:['Morte + IAD','Despesas de funeral e morte por acidente']},
+   {n:'Reforçada',inv:[{t:'ITP',pct:[60,65],termo:67},{t:'IAD',termo:85}],dg:null,exon:'inc',x:['IDPAC 60% ou 65%','Devolução do prémio por baixa, desemprego ou internamento (máx. 300 €/mês, carência 90 dias)']}],
+   notes:['Capital não desce automaticamente com a dívida: atualização a pedido','Idade máxima de entrada por confirmar']},
+ {ins:'Mapfre',prod:'Vida Crédito Habitação',entryMax:65,data:'Pré-contratual 01/2025',url:'https://mapfre.pt/media/IPC_VidaCredHabitacao_21012025.pdf',plans:[
+   {n:'Morte + IAD',inv:[{t:'IAD',termo:75}],dg:null,exon:null,x:['Contrato até aos 85 anos']},
+   {n:'Morte + IDPAC 60%',inv:[{t:'ITP',pct:[60],termo:67},{t:'IAD',termo:75}],dg:null,exon:null,x:['IDPAC pode ir até aos 70 se continuar a trabalhar','Só uma cobertura de invalidez por apólice']}],
+   notes:[]},
+ {ins:'Zurich',prod:'Crédito Habitação Zurich Pleno',entryMax:null,data:'Pré-contratual 06/2025',url:'https://www.zurich.com.pt/pt-pt/particulares/credito-habitacao-e-protecao/credito-habitacao-zurich-pleno',plans:[
+   {n:'Morte + IAD',inv:[{t:'IAD',termo:80}],dg:null,exon:null,x:['Morte e IAD até aos 80 anos']},
+   {n:'Morte + IDPAC 60% / 66,66%',inv:[{t:'ITP',pct:[60,66],termo:67}],dg:null,exon:null,x:['Também há Invalidez para Qualquer Profissão 60% ou 70%','Só uma invalidez por apólice']}],
+   notes:['Idade máxima de entrada por confirmar']},
+ {ins:'April',prod:'Vida Crédito APRIL',entryMax:64,data:'Site 09/2026',url:'https://www.april-portugal.pt/seguros-de-vida-credito-habitacao/',plans:[
+   {n:'Morte + IAD',inv:[{t:'IAD',termo:null}],dg:null,exon:null,x:[]},
+   {n:'Morte + ITP 60% / 65%',inv:[{t:'ITP',pct:[60,65],termo:null},{t:'IAD',termo:null}],dg:null,exon:null,x:['Opcional: Morte por Acidente de Circulação (até 100% do capital, máx. 100.000 €)']}],
+   notes:['Idades de termo por confirmar']},
+ {ins:'Real Vida',prod:'Real Seguro Vida Habitação',entryMax:null,data:'Site 10/2026',url:'https://www.realvidaseguros.pt/particulares/seguros-de-vida/real-habitacao',plans:[
+   {n:'Morte + IAD',inv:[{t:'IAD',termo:null}],dg:'opc',exon:null,x:['Morte por acidente e filhos menores a cargo oferecidos até 60 anos','Permanência até aos 85 anos']},
+   {n:'Morte + IAD + ITP 60%',inv:[{t:'ITP',pct:[60],termo:67},{t:'IAD',termo:null}],dg:'opc',exon:null,x:['Doenças Graves opcional','Sem exames médicos: 18–55 anos até 500.000 €; 56–65 anos até 400.000 €']}],
+   notes:['Idade máxima de entrada por confirmar']},
+ {ins:'MetLife',prod:'Vida Completa (Crédito Habitação)',entryMax:null,data:'Site 10/2026',url:'https://www.metlife.pt/particulares/vida/seguro-vida-credito-habitacao/',plans:[
+   {n:'Vida Completa',inv:[{t:'IAD',termo:75}],dg:null,exon:null,x:['Morte até aos 85 anos','Sem exames médicos até 350.000 € e 50 anos']},
+   {n:'Crédito Habitação Extra',inv:[{t:'ITP',pct:null,termo:67},{t:'IAD',termo:75}],dg:null,exon:null,x:['ITP até aos 67 anos']}],
+   notes:['Grau de desvalorização da ITP por confirmar']},
+ {ins:'Una',prod:'Seguro Crédito Habitação',entryMax:null,partial:true,data:'Site (print) 10/2026',url:'https://www.unaseguros.pt',plans:[
+   {n:'Morte + IAD',inv:[{t:'IAD',termo:80}],dg:'opc',exon:'opc',x:['Morte até aos 80 anos']},
+   {n:'Morte + IDPAC 60%',inv:[{t:'ITP',pct:[60],termo:67}],dg:'opc',exon:'opc',x:['Exoneração de prémios até aos 60','Antecipação do capital por doenças graves até aos 60']}],
+   notes:['Faltam condições: idade de entrada, exclusões, carências, lista de doenças graves']},
+ {ins:'Asisa',prod:'Vida + Fácil',entryMax:null,partial:true,data:'Fonte secundária (DECO)',url:'https://www.deco.proteste.pt/dinheiro/comprar-vender-casa/noticias/seguro-vida-credito-habitacao-escolher-melhor-cobertura',plans:[
+   {n:'Morte + ITP 60% / 65%',inv:[{t:'ITP',pct:[60,65],termo:null}],dg:null,exon:null,x:[]}],
+   notes:['Sem documentação oficial: confirmar tudo']},
+ {ins:'Vitória',prod:'VICTORIA Vida Crédito Habitação',entryMax:null,partial:true,rare:true,data:'Site (print) 10/2026',url:'https://www.victoria-seguros.pt',plans:[
+   {n:'Morte + IDPAC 60%',inv:[{t:'ITP',pct:[60],termo:null}],dg:null,exon:null,x:[]}],
+   notes:['Pouco usada pela agência','Sem condições: confirmar tudo']}
+];
+function evalVida(p,c){
+  const notes=[...p.notes];
+  if(c.idade && p.entryMax && c.idade>p.entryMax) return {s:'no',why:`Entrada só até aos ${p.entryMax} anos`,notes};
+  if(c.idade && !p.entryMax) notes.unshift('Confirmar se aceita '+c.idade+' anos');
+  for(const pl of p.plans){
+    const itp=pl.inv.find(i=>i.t==='ITP');
+    let invOk;
+    if(c.inv==='iad') invOk=true;
+    else { invOk=!!itp && (itp.pct===null || itp.pct.some(x=>x<=c.pct)); }
+    if(!invOk) continue;
+    if(c.dg && !pl.dg) continue;
+    if(c.exon && !pl.exon) continue;
+    const opt=(c.dg&&pl.dg==='opc')||(c.exon&&pl.exon==='opc');
+    const n=[...notes];
+    if(c.inv==='itp' && itp){
+      if(itp.pct===null) n.unshift('Grau da ITP não confirmado');
+      if(itp.termo && c.idade && c.idade>=itp.termo) n.unshift(`A ITP termina aos ${itp.termo}: na idade do cliente já não se aplica`);
+    }
+    const facts=[...pl.x];
+    pl.inv.forEach(i=>facts.push(i.t==='ITP'?`ITP/IDPAC ${i.pct?i.pct.join('% / ')+'%':'(grau ?)'}${i.termo?' · até aos '+i.termo:''}`:`IAD${i.termo?' · até aos '+i.termo:''}`));
+    if(p.entryMax) facts.push('Entrada até aos '+p.entryMax+' anos');
+    return {s:p.partial?'conf':opt?'opc':'ok',plan:pl.n,facts:[...new Set(facts)],notes:n};
+  }
+  return {s:'no',why:c.inv==='itp'?'Não tem ITP/IDPAC com esse grau':'Não tem a cobertura pedida',notes};
+}
+
+/* ---------- AUTO ---------- */
+const AUTO_K={rcFac:'RC facultativa (≥40 M€)',vidros:'Quebra de vidros',vs:'Veículo de substituição',furto:'Furto ou roubo',incendio:'Incêndio',natureza:'Fenómenos da natureza',vandalismo:'Vandalismo',choque:'Choque, colisão, capotamento',valorNovo:'Valor em novo'};
+const AUTO=[
+ {ins:'Allianz',prod:'Allianz Auto',data:'Site 10/2026',url:'https://www.allianz.pt/seguro-auto.html',plans:[
+   {n:'RC Base',c:{rcFac:'inc'}},
+   {n:'RC Mais',c:{rcFac:'inc',vs:'inc',vidros:'inc'}},
+   {n:'Danos Próprios Base',c:{rcFac:'inc',vs:'inc',vidros:'inc',furto:'inc',incendio:'inc',natureza:'inc',vandalismo:'?',valorNovo:'inc'}},
+   {n:'Danos Próprios Mais',c:{rcFac:'inc',vs:'inc',vidros:'inc',furto:'inc',incendio:'inc',natureza:'inc',vandalismo:'?',valorNovo:'inc',choque:'inc'}}],
+   x:['RC até 50 M€ em todos os módulos','Vidros até 2.500 €','Sem franquia em vidros, incêndio, furto e fenómenos da natureza','Valor em novo só em carros novos, 3 primeiros anos']},
+ {ins:'Zurich',prod:'Zurich Auto Ligeiros e Comerciais',data:'Site 10/2026',url:'https://www.zurich.com.pt/pt-pt/particulares/automovel/automovel',plans:[
+   {n:'Simples',c:{rcFac:'opc',vs:'opc'}},
+   {n:'Essencial',c:{rcFac:'opc',vs:'opc',vidros:'inc'}},
+   {n:'Essencial +',c:{rcFac:'opc',vs:'opc',vidros:'inc',furto:'inc',natureza:'inc',incendio:'inc',vandalismo:'opc',valorNovo:'opc'}},
+   {n:'Premium',c:{rcFac:'opc',vs:'opc',vidros:'inc',furto:'inc',natureza:'inc',incendio:'inc',vandalismo:'inc',choque:'inc',valorNovo:'opc'}}],
+   x:['Vidros 1.500 € no Essencial','Ocupantes inclui animais de estimação','Capital de morte duplica se todos usarem cinto']},
+ {ins:'Tranquilidade',prod:'Seguro Automóvel',data:'Site 10/2026',url:'https://www.generalitranquilidade.pt/particulares/seguros/automovel/auto',plans:[
+   {n:'Base',c:{rcFac:'?',vs:'opc',vidros:'opc'}},
+   {n:'Mais',c:{rcFac:'?',vs:'inc',furto:'inc',incendio:'inc',natureza:'inc',vidros:'opc',choque:'opc'}},
+   {n:'Top',c:{rcFac:'?',vs:'inc',furto:'inc',incendio:'inc',natureza:'inc',vidros:'inc',choque:'inc',vandalismo:'?'}}],
+   x:['Qualquer cobertura extra pode ser acrescentada a qualquer opção','Assistência própria para elétricos']},
+ {ins:'Mapfre',prod:'MAPFRE Auto',data:'IPID 06/2022',old:true,url:'https://www.mapfre.pt/media/DIPS_410_MAPFREAuto_01062022.pdf',plans:[
+   {n:'Light',c:{rcFac:'opc',vidros:'opc',vs:'opc'}},
+   {n:'Plus',c:{rcFac:'opc',vidros:'inc',furto:'inc',incendio:'inc',vs:'opc'}},
+   {n:'Prestige',c:{rcFac:'inc',vidros:'inc',furto:'inc',incendio:'inc',choque:'inc',natureza:'inc',vandalismo:'opc',vs:'opc'}}],
+   x:['Vidros até 1.000 €','RC facultativa até 42,25 M€','Acidentes do condutor incluídos em todas']},
+ {ins:'Una',prod:'Seguro Automóvel',data:'Site (print) 10/2026',url:'https://www.unaseguros.pt',plans:[
+   {n:'Base',c:{vs:'opc'}},
+   {n:'Base +',c:{rcFac:'opc',vidros:'inc',vs:'opc'}},
+   {n:'Conforto',c:{rcFac:'opc',vidros:'inc',furto:'inc',incendio:'inc',natureza:'opc',vandalismo:'opc',valorNovo:'inc',vs:'opc'}},
+   {n:'Luxo',c:{rcFac:'opc',vidros:'inc',furto:'inc',incendio:'inc',natureza:'inc',vandalismo:'inc',choque:'inc',valorNovo:'inc',vs:'inc'}}],
+   x:['Franquia à escolha: 2%, 4%, 8%, 10% ou 12%','Vidros 1.000 € ou 2.000 € (com logótipo da marca)','Valor em novo: 1 ano (Conforto), 2 anos (Luxo), só carros com menos de 12 meses','Assistência para elétricos (bateria, cabos)'],
+   notes:['RC base: tabela diz 7,75 M€, cartões dizem 7,5 M€']},
+ {ins:'Vitória',prod:'VICTORIA Auto',data:'Tabela 10/2023',old:true,url:'https://www.victoria-seguros.pt',plans:[
+   {n:'RC Base',c:{}},
+   {n:'RC Extra',c:{rcFac:'opc',vidros:'opc'}},
+   {n:'DP Base',c:{rcFac:'opc',vidros:'opc',furto:'inc',incendio:'inc',choque:'opc',natureza:'opc',vandalismo:'opc',valorNovo:'opc',vs:'opc'}},
+   {n:'DP Extra',c:{rcFac:'opc',vidros:'opc',furto:'inc',incendio:'inc',choque:'inc',natureza:'inc',vandalismo:'inc',valorNovo:'opc',vs:'opc'}}],
+   x:['Vidros 500 € a 2.500 €','DP Extra inclui bagagem até 1.000 €','Privação de uso opcional (15 ou 30 dias)']}
+];
+function evalPlans(p,need,get){
+  let opt=null,unk=null;
+  for(const pl of p.plans){
+    const v=need.map(k=>get(pl,k));
+    if(v.every(x=>x==='inc')) return {s:'ok',plan:pl.n};
+    if(!opt && v.every(x=>x==='inc'||x==='opc')) opt=pl;
+    if(!unk && v.every(x=>x==='inc'||x==='opc'||x==='?')) unk=pl;
+  }
+  if(opt) return {s:'opc',plan:opt.n,extra:need.filter(k=>get(opt,k)==='opc')};
+  if(unk) return {s:'conf',plan:unk.n,unk:need.filter(k=>get(unk,k)==='?')};
+  return {s:'no'};
+}
+function evalAuto(p,c){
+  const need=Object.keys(AUTO_K).filter(k=>c[k]);
+  const r=evalPlans(p,need,(pl,k)=>pl.c[k]||null);
+  const notes=[...(p.notes||[])];
+  if(p.old) notes.push('Documento antigo ('+p.data+'): confirmar se ainda está em vigor');
+  if(r.extra) notes.unshift('Acrescentar: '+r.extra.map(k=>AUTO_K[k]).join(', '));
+  if(r.unk) notes.unshift('Por confirmar: '+r.unk.map(k=>AUTO_K[k]).join(', '));
+  if(r.s==='no') return {s:'no',why:'Nenhum plano cobre tudo o que foi pedido',notes};
+  if(r.s==='ok' && p.old) r.s='conf';
+  return {s:r.s,plan:r.plan,facts:p.x,notes};
+}
+
+/* ---------- SAÚDE ---------- */
+const SAUDE=[
+ {ins:'Allianz',prod:'Allianz Saúde',ageMax:null,data:'Site 10/2026',url:'https://www.allianz.pt/seguro-saude.html',plans:[
+   {n:'Base',h:75000,a:0,parto:'rede',est:null,dg:null,x:['Consultas e exames a preço de rede']},
+   {n:'Standard',h:30000,a:1000,parto:'rede',est:null,dg:null,x:[]},
+   {n:'Mais',h:75000,a:2500,parto:'rede',est:null,dg:null,x:['Consultas a 19 €']},
+   {n:'Extra',h:150000,a:2500,parto:5000,est:null,dg:null,x:['Consultas a 19 €']},
+   {n:'Total',h:500000,a:10000,parto:10000,est:1000,dg:1000000,x:['Oncologia (>18 anos) 1 M€','Medicamentos 1.000 €']}],
+   x:['Cobertura médica internacional para doenças graves 1 M€ (exceto Base)'],notes:['Idade máxima de adesão por confirmar']},
+ {ins:'Tranquilidade',prod:'Seguro Saúde (AdvanceCare)',ageMax:65,data:'Site 10/2026',url:'https://www.generalitranquilidade.pt/particulares/seguros/saude/saude-individual',plans:[
+   {n:'Base',h:15000,a:0,parto:false,est:null,dg:null,x:['Saúde mental incluída']},
+   {n:'Mais',h:75000,a:2500,parto:true,est:null,dg:null,x:[]},
+   {n:'Top',h:500000,a:5000,parto:true,est:1000,dg:1000000,x:['Medicamentos 1.000 €','Próteses 2.500 €']}],
+   x:['Carências: internamento 90 dias, ambulatório 60, doenças graves 180'],notes:[]},
+ {ins:'Zurich',prod:'Zurich Saúde (rede Médis)',ageMax:null,data:'Site 10/2026',url:'https://www.zurich.com.pt/pt-pt/particulares/saude/zurich-saude',plans:[
+   {n:'Opção 1',h:15000,a:1000,aOpc:true,parto:false,est:null,dg:null,x:['Ambulatório opcional: 200 € ou 1.000 €']},
+   {n:'Opção 2',h:50000,a:2500,parto:true,est:'opc',dg:null,x:['Estomatologia opcional 250 €']},
+   {n:'Opção 3',h:1000000,a:5000,parto:true,est:'opc',dg:null,x:['Estomatologia opcional 1.000 €','Internacional: Navarra ilimitado, outros centros 75.000 €']}],
+   x:['Opções 2 e 3 com proteção oncológica reforçada'],notes:['Idade máxima de adesão por confirmar']},
+ {ins:'Mapfre',prod:'MAPFRE Saúde (rede Médis)',ageMax:null,old:true,data:'IPID 02/2023',url:'https://www.mapfre.pt/media/DIPS_222_MAPFRE_Saude_Individual_01022023.pdf',plans:[
+   {n:'Opção 1',h:15000,a:1000,aOpc:true,parto:false,est:null,dg:null,x:['Ambulatório opcional: 200 € ou 1.000 €']},
+   {n:'Opção 2',h:50000,a:2500,parto:true,est:'opc',dg:null,x:['Estomatologia opcional 250 €']},
+   {n:'Opção 3',h:1000000,a:5000,parto:true,est:'opc',dg:1000000,x:['Estomatologia opcional 1.000 €','Internacional: Navarra ilimitado']}],
+   x:[],notes:['Idade máxima de adesão por confirmar']},
+ {ins:'Asisa',prod:'ASISA Saúde Premium',ageMax:null,partial:true,data:'Notícia 2021',url:'https://www.redaccionmedica.com/ultimas-noticias-sanidad/asisa-refuerza-su-oferta-en-portugal-con-el-lanzamiento-de-un-nuevo-seguro-de-salud',plans:[
+   {n:'Saúde Premium',h:Infinity,a:null,parto:null,est:null,dg:null,x:['Sem limite de capital nem idade de permanência (segundo notícia de 2021)','Sem copagamento nas unidades próprias ASISA']}],
+   x:[],notes:['Sem documentação atual: confirmar tudo']}
+];
+function evalSaude(p,c){
+  const notes=[...p.notes];
+  if(c.idade && p.ageMax && c.idade>p.ageMax) return {s:'no',why:`Adesão só até aos ${p.ageMax} anos`,notes};
+  if(c.idade && !p.ageMax && !p.partial) notes.unshift('Confirmar se aceita '+c.idade+' anos');
+  if(p.old) notes.push('Documento antigo ('+p.data+'): confirmar se ainda está em vigor');
+  for(const pl of p.plans){
+    if(pl.h<c.hosp) continue;
+    if(c.amb && (pl.a==null ? !p.partial : pl.a<c.amb)) continue;
+    if(c.parto && !(pl.parto===true||typeof pl.parto==='number'||p.partial)) continue;
+    if(c.est && !pl.est && !p.partial) continue;
+    if(c.dg && !pl.dg && !p.partial) continue;
+    const opt=(c.est&&pl.est==='opc')||(c.amb&&pl.aOpc);
+    const facts=[`Internamento/cirurgia: ${pl.h===Infinity?'sem limite':eur(pl.h)}`,`Ambulatório: ${pl.a?eur(pl.a):pl.a===0?'só preço de rede':'—'}`];
+    if(pl.parto) facts.push('Parto: '+(pl.parto===true?'incluído':pl.parto==='rede'?'só preço de rede':eur(pl.parto)));
+    if(pl.est) facts.push('Estomatologia: '+(pl.est==='opc'?'opcional':eur(pl.est)));
+    if(pl.dg) facts.push('Doenças graves: '+eur(pl.dg));
+    if(p.ageMax) facts.push('Adesão até aos '+p.ageMax+' anos');
+    return {s:p.partial||p.old?'conf':opt?'opc':'ok',plan:pl.n,facts:[...facts,...pl.x,...p.x],notes};
+  }
+  return {s:'no',why:'Nenhum plano chega aos valores pedidos',notes};
+}
+
+/* ---------- AT INDEPENDENTE ---------- */
+const AT_K={h24:'Acidentes fora do trabalho (24h)',viagem:'Assistência em viagens de trabalho',lar:'Assistência em casa após acidente'};
+const AT=[
+ {ins:'Allianz',prod:'Acidentes de Trabalho (Empresários e Independentes)',data:'Site 10/2026',url:'https://www.allianz.pt/seguro-acidentes-empresarios.html',plans:[
+   {n:'Base',c:{}},{n:'Mais',c:{h24:'inc',viagem:'inc'}}],x:['Rede médica exclusiva']},
+ {ins:'Zurich',prod:'Zurich Trabalhador Independente',data:'Site 10/2026',url:'https://www.zurich.com.pt/pt-pt/particulares/acidentes-de-trabalho/independentes',plans:[
+   {n:'Base + complementares',c:{lar:'opc',h24:'?',viagem:'?'}}],x:['Deslocações até 15 dias em Portugal e UE','Readaptação da casa após acidente fora do trabalho (incapacidade ≥ 75%)','Assistência no lar: lavandaria, limpezas, refeições, reparações']},
+ {ins:'Mapfre',prod:'Trabalhadores Independentes',data:'IPID 08/2022',old:true,url:'https://www.mapfre.pt/media/dip-190-at-multiprotecao-24-plus.pdf',plans:[
+   {n:'Base',c:{}},{n:'Multiproteção 24+',c:{h24:'inc',lar:'?',viagem:'?'}},{n:'Proteção Completa 24+',c:{h24:'inc',lar:'?',viagem:'?'}}],x:['Multiproteção: deslocações na UE até 30 dias','Passar a trabalho operacional tem de ser comunicado em 14 dias']},
+ {ins:'Tranquilidade',prod:'Acidentes de Trabalho',data:'—',partial:true,url:'https://www.generalitranquilidade.pt/empresas/seguros/acidentes-de-trabalho',plans:[
+   {n:'—',c:{h24:'?',viagem:'?',lar:'?'}}],x:[],notes:['Sem página pública para independentes: pedir ficha na área de mediador']}
+];
+function evalAT(p,c){
+  const need=Object.keys(AT_K).filter(k=>c[k]);
+  const notes=[...(p.notes||[])];
+  if(p.old) notes.push('Documento antigo ('+p.data+'): confirmar se ainda está em vigor');
+  const r=evalPlans(p,need,(pl,k)=>pl.c[k]||null);
+  if(r.extra) notes.unshift('Acrescentar: '+r.extra.map(k=>AT_K[k]).join(', '));
+  if(r.unk) notes.unshift('Por confirmar: '+r.unk.map(k=>AT_K[k]).join(', '));
+  if(r.s==='no') return {s:'no',why:'Não tem as coberturas pedidas',notes};
+  if(p.partial||(p.old&&r.s==='ok')) r.s='conf';
+  return {s:r.s,plan:r.plan,facts:['Coberturas obrigatórias por lei',...p.x],notes};
+}
+
+/* ---------- EM FALTA ---------- */
+const TODO=[
+ {t:'Una',i:['Vida Crédito: Informação Pré-Contratual ou Condições Gerais (idade de entrada, exclusões, carências, lista de doenças graves)','Auto: Condições Gerais e confirmar RC base (7,5 ou 7,75 M€)','Acidentes de Trabalho independente: ficha do produto','Saúde: planos e capitais']},
+ {t:'Asisa',i:['Vida + Fácil: IPID ou Condições Gerais','Saúde: planos atuais (capitais, idades, carências)']},
+ {t:'Vitória',i:['Auto: confirmar se a tabela de 10/2023 ainda é a atual','Acidentes de Trabalho independente: ficha do produto','Saúde: planos e capitais','Vida Crédito (opcional, pouco usada): ficha do produto']},
+ {t:'Tranquilidade',i:['Acidentes de Trabalho independente: ficha ou IPID']},
+ {t:'Real Vida',i:['Saúde: planos e capitais (o site não mostrou)']},
+ {t:'Mapfre',i:['Confirmar versões em vigor: Auto (06/2022), Saúde (02/2023), Acidentes de Trabalho (08/2022)']},
+ {t:'MetLife',i:['Vida Crédito: grau da ITP no Crédito Habitação Extra']},
+ {t:'Idades em falta',i:['Vida Crédito, idade máxima de entrada: Allianz, Tranquilidade, Zurich, Real Vida, MetLife, Una','Saúde, idade máxima de adesão: Allianz, Zurich, Mapfre']},
+ {t:'Ramo "Vários"',i:['Ainda não levantado: dizer que produtos entram aqui (Hiscox, Arag, Casa, RC…)']}
+];
+
+/* ---------- UI ---------- */
+const RAMOS=[
+ {id:'vida',nome:'Vida Crédito',data:VIDA,ev:evalVida,def:{idade:40,inv:'itp',pct:65,dg:false,exon:false},
+  form:c=>`<div class="fields">
+   <label class="f">Idade do cliente<input type="number" id="vida-idade" min="18" max="90" value="${c.idade}"></label>
+   <label class="f">Invalidez pedida pelo banco<select id="vida-inv"><option value="iad"${c.inv==='iad'?' selected':''}>Só IAD</option><option value="itp"${c.inv==='itp'?' selected':''}>ITP / IDPAC</option></select></label>
+   <label class="f">Grau máximo de ITP aceite<select id="vida-pct">${[60,65,66].map(v=>`<option value="${v}"${c.pct==v?' selected':''}>${v===66?'66–70':v}%</option>`).join('')}</select></label></div>
+   <div class="checks"><label class="chk"><input type="checkbox" id="vida-dg"${c.dg?' checked':''}> Doenças graves</label>
+   <label class="chk"><input type="checkbox" id="vida-exon"${c.exon?' checked':''}> Isenção de prémios (baixa/desemprego)</label></div>`,
+  read:()=>({idade:+document.getElementById('vida-idade').value||null,inv:document.getElementById('vida-inv').value,pct:+document.getElementById('vida-pct').value,dg:document.getElementById('vida-dg').checked,exon:document.getElementById('vida-exon').checked})},
+ {id:'auto',nome:'Auto',data:AUTO,ev:evalAuto,def:{furto:true,incendio:true,vidros:true},
+  form:c=>`<p class="sub" style="margin:0 0 4px">Marque o que o cliente quer. Mostra o plano mais simples de cada seguradora que cobre tudo.</p>
+   <div class="checks">${Object.entries(AUTO_K).map(([k,v])=>`<label class="chk"><input type="checkbox" id="auto-${k}"${c[k]?' checked':''}> ${v}</label>`).join('')}</div>`,
+  read:()=>Object.fromEntries(Object.keys(AUTO_K).map(k=>[k,document.getElementById('auto-'+k).checked]))},
+ {id:'saude',nome:'Saúde',data:SAUDE,ev:evalSaude,def:{idade:40,hosp:75000,amb:0,parto:false,est:false,dg:false},
+  form:c=>`<div class="fields">
+   <label class="f">Idade do cliente<input type="number" id="saude-idade" min="0" max="99" value="${c.idade}"></label>
+   <label class="f">Internamento/cirurgia mínimo<select id="saude-hosp">${[15000,30000,50000,75000,150000,500000,1000000].map(v=>`<option value="${v}"${c.hosp==v?' selected':''}>${eur(v)}</option>`).join('')}</select></label>
+   <label class="f">Ambulatório mínimo<select id="saude-amb">${[0,1000,2500,5000].map(v=>`<option value="${v}"${c.amb==v?' selected':''}>${v?eur(v):'Não é preciso'}</option>`).join('')}</select></label></div>
+   <div class="checks"><label class="chk"><input type="checkbox" id="saude-parto"${c.parto?' checked':''}> Parto</label>
+   <label class="chk"><input type="checkbox" id="saude-est"${c.est?' checked':''}> Estomatologia</label>
+   <label class="chk"><input type="checkbox" id="saude-dg"${c.dg?' checked':''}> Doenças graves</label></div>`,
+  read:()=>({idade:+document.getElementById('saude-idade').value||null,hosp:+document.getElementById('saude-hosp').value,amb:+document.getElementById('saude-amb').value,parto:document.getElementById('saude-parto').checked,est:document.getElementById('saude-est').checked,dg:document.getElementById('saude-dg').checked})},
+ {id:'at',nome:'AT Independente',data:AT,ev:evalAT,def:{},
+  form:c=>`<p class="sub" style="margin:0 0 4px">A cobertura de acidentes de trabalho é igual em todas (obrigatória por lei). Escolha os extras que o cliente quer.</p>
+   <div class="checks">${Object.entries(AT_K).map(([k,v])=>`<label class="chk"><input type="checkbox" id="at-${k}"${c[k]?' checked':''}> ${v}</label>`).join('')}</div>`,
+  read:()=>Object.fromEntries(Object.keys(AT_K).map(k=>[k,document.getElementById('at-'+k).checked]))},
+ {id:'falta',nome:'Em falta'}
+];
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let cur=store.get('cs-tab','vida');
+const crit={};RAMOS.forEach(r=>{if(r.def)crit[r.id]=store.get('cs-'+r.id,r.def)});
+
+function tabs(){
+  document.getElementById('tabs').innerHTML=RAMOS.map(r=>`<button role="tab" aria-selected="${r.id===cur}" data-id="${r.id}">${r.nome}</button>`).join('');
+}
+document.getElementById('tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;cur=b.dataset.id;store.set('cs-tab',cur);tabs();view()});
+
+function card(p,r){
+  const pills=`<span class="pill ${r.s}">${ST[r.s]}</span>`;
+  return `<article class="card ${r.s==='no'?'no':''}">
+   <div class="top"><div><div class="ins">${p.ins}${p.rare?' <span class="prod">· pouco usada</span>':''}</div><div class="prod">${p.prod}</div></div>${pills}</div>
+   ${r.plan?`<div class="plan">${r.plan} <span>· plano mínimo que cumpre</span></div>`:`<div class="plan"><span>${r.why}</span></div>`}
+   ${r.facts&&r.facts.length?`<ul class="facts">${r.facts.map(f=>`<li>${f}</li>`).join('')}</ul>`:''}
+   ${r.notes&&r.notes.length?`<div class="notes">${r.notes.join(' · ')}</div>`:''}
+   <div class="src"><span>Fonte: ${p.data}</span><a href="${p.url}" target="_blank" rel="noopener">Abrir fonte</a></div>
+  </article>`;
+}
+function results(R){
+  const c=crit[R.id];const order={ok:0,opc:1,conf:2,no:3};
+  const rows=R.data.map(p=>({p,r:R.ev(p,c)})).sort((a,b)=>order[a.r.s]-order[b.r.s]);
+  const yes=rows.filter(x=>x.r.s!=='no'),no=rows.filter(x=>x.r.s==='no');
+  return `<div class="legend"><span><b>${yes.length}</b> de ${rows.length} seguradoras servem este cliente</span></div>
+   <div class="results">${yes.map(x=>card(x.p,x.r)).join('')||'<div class="card">Nenhuma seguradora cumpre. Experimente baixar os requisitos.</div>'}</div>
+   ${no.length?`<details class="more"><summary>Não cumprem (${no.length})</summary><div class="results">${no.map(x=>card(x.p,x.r)).join('')}</div></details>`:''}`;
+}
+function view(){
+  const v=document.getElementById('view');const R=RAMOS.find(r=>r.id===cur);
+  if(R.id==='falta'){
+    v.innerHTML=`<div class="todo"><div class="panel"><h2>Para trazer da agência</h2><p class="sub" style="margin:0">Enviar no chat; os dados são atualizados na app.</p></div>${TODO.map(g=>`<div class="panel"><h3>${g.t}</h3><ul>${g.i.map(i=>`<li>${i}</li>`).join('')}</ul></div>`).join('')}</div>`;
+    return;
+  }
+  v.innerHTML=`<section class="panel" id="form-${R.id}"><h2>Perfil do cliente</h2>${R.form(crit[R.id])}</section><section id="res">${results(R)}</section>`;
+  document.getElementById('form-'+R.id).addEventListener('input',()=>{crit[R.id]=R.read();store.set('cs-'+R.id,crit[R.id]);document.getElementById('res').innerHTML=results(R)});
+}
+tabs();view();
+</script>
+
+<script>
+if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>
