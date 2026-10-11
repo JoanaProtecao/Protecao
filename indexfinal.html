@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<title>A Sua Proteção Familiar</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: single narrow column, one question block per row, result card at the end.
+   Calm green palette, large touch targets, no sales language on the page. */
+:root {
+  --bg: #F7F3ED;
+  --surface: #FFFFFF;
+  --ink: #252525;
+  --muted: #5A5A5A;
+  --line: #E3D9C9;
+  --accent: #D2A46D;
+  --accent-ink: #0F2E3D;
+  --on-accent: #0F2E3D;
+  --accent-soft: #EFE2CC;
+  --deep: #0F2E3D;
+  --warn: #7A4E05;
+  --warn-soft: #FBEACB;
+  --bad: #A8332B;
+  --f: 'Poppins', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0A1F2A; --surface: #0F2E3D; --ink: #F7F3ED; --muted: #B9C4C9; --line: #24495A;
+    --accent: #D2A46D; --accent-ink: #D2A46D; --on-accent: #0F2E3D; --accent-soft: #17394A; --deep: #F7F3ED;
+    --warn: #E7B363; --warn-soft: #3A2C10; --bad: #F08A82;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0A1F2A; --surface: #0F2E3D; --ink: #F7F3ED; --muted: #B9C4C9; --line: #24495A;
+  --accent: #D2A46D; --accent-ink: #D2A46D; --on-accent: #0F2E3D; --accent-soft: #17394A; --deep: #F7F3ED;
+  --warn: #E7B363; --warn-soft: #3A2C10; --bad: #F08A82;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f); font-size: 15px; line-height: 1.55; padding-inline: 16px; }
+.wrap { max-width: 640px; margin-inline: auto; padding-block: 28px 56px; display: grid; gap: 28px; }
+h1, h2, h3, p { margin: 0; }
+h1 { font-size: clamp(1.9rem, 7vw, 2.5rem); line-height: 1.1; font-weight: 700; letter-spacing: -.02em; text-wrap: balance; color: var(--deep); }
+h2 { font-size: 1.15rem; font-weight: 600; }
+.eyebrow { font-size: .75rem; letter-spacing: .16em; text-transform: uppercase; font-weight: 600; color: var(--accent-ink); margin-bottom: 8px; }
+.lede { color: var(--muted); margin-top: 12px; max-width: 46ch; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 10px; }
+.card h2 { font-size: 1rem; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 14px; }
+.cols ul { margin: 6px 0 0; padding-left: 1.1em; display: grid; gap: 3px; font-size: .9rem; color: var(--muted); }
+.cols strong { font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; }
+.who { border-left: 4px solid var(--accent); padding: 4px 0 4px 14px; font-size: .92rem; color: var(--muted); }
+.who b { color: var(--ink); font-weight: 600; }
+.who a { color: var(--accent-ink); font-weight: 600; word-break: break-all; }
+.preview { background: var(--warn-soft); color: var(--ink); border-radius: 10px; padding: 12px 14px; font-size: .88rem; }
+
+form { display: grid; gap: 26px; }
+fieldset { border: 0; padding: 0; margin: 0; min-width: 0; display: grid; gap: 10px; }
+legend { font-weight: 600; font-size: 1rem; padding: 0; margin-bottom: 2px; }
+.hint { font-size: .82rem; color: var(--muted); }
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt { position: relative; }
+.opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.opt .lab { display: inline-flex; align-items: center; min-height: 48px; padding: 10px 16px; border: 1.5px solid var(--line); background: var(--surface); border-radius: 10px; cursor: pointer; font-size: .95rem; }
+.opt input:checked + .lab { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+.opt input:focus-visible + .lab { outline: 2px solid var(--accent); outline-offset: 2px; }
+input[type="text"], input[type="tel"], input[type="number"], select { font: inherit; font-size: 16px; color: var(--ink); background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; padding: 11px 13px; min-height: 48px; width: 100%; }
+.row2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 14px; }
+.field { display: grid; gap: 6px; min-width: 0; }
+.field label { font-weight: 600; font-size: .95rem; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn { font: inherit; font-weight: 600; font-size: 1rem; min-height: 52px; padding: 13px 22px; border-radius: 12px; border: 1.5px solid var(--accent); background: var(--accent); color: var(--on-accent); cursor: pointer; text-align: center; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+.btn.ghost { background: transparent; color: var(--accent-ink); }
+.btn[aria-disabled="true"] { opacity: .45; pointer-events: none; }
+.err { color: var(--bad); font-size: .9rem; font-weight: 500; min-height: 1.2em; }
+
+.result { display: grid; gap: 18px; }
+.score { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.score b { font-size: 2.6rem; line-height: 1; font-weight: 700; color: var(--deep); font-variant-numeric: tabular-nums; }
+.score span { color: var(--muted); }
+.meter { height: 10px; border-radius: 99px; background: var(--accent-soft); overflow: hidden; }
+.meter span { display: block; height: 100%; border-radius: 99px; background: var(--accent); }
+.pt { display: grid; gap: 4px; padding-top: 12px; border-top: 1px solid var(--line); }
+.pt:first-child { border-top: 0; padding-top: 0; }
+.pt b { font-weight: 600; }
+.pt span { color: var(--muted); font-size: .92rem; }
+.cap { background: var(--accent-soft); border-radius: 10px; padding: 12px 14px; font-size: .92rem; }
+.send { display: grid; gap: 10px; }
+.copybox { width: 100%; min-height: 9rem; font: inherit; font-size: .85rem; color: var(--ink); background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; padding: 10px; }
+.fine { font-size: .8rem; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+<style>[hidden]{display:none!important}body{margin:0}</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <p class="eyebrow">Joana Pereira | Proteção Financeira</p>
+    <h1>A conta da sua família</h1>
+    <p class="lede">Responda em menos de 2 minutos. No fim vê o que pode ficar por proteger e pode enviar as respostas por mensagem para receber uma sugestão.</p>
+  </header>
+
+  <p class="who" id="who" hidden></p>
+
+  <div class="preview" id="preview" hidden>Pré-visualização: faltam o número de WhatsApp, o nome ou o email de contacto para a página ficar completa.</div>
+
+  <section class="card" aria-label="Que dados pedimos">
+    <h2>O que pedimos e o que não pedimos</h2>
+    <div class="cols">
+      <div><strong>Pedimos</strong><ul><li>Idade e situação familiar</li><li>Situação profissional</li><li>Faixas de rendimento e de crédito</li><li>Os seguros que já tem</li></ul></div>
+      <div><strong>Não pedimos</strong><ul><li>NIF ou número de cartão</li><li>Morada</li><li>Dados bancários</li></ul></div>
+    </div>
+    <p class="fine">As respostas servem só para o contactar sobre proteção. Nada fica guardado nesta página.</p>
+  </section>
+
+  <form id="f" novalidate>
+    <div class="field"><label for="q-nome">Como se chama? (opcional)</label><input type="text" id="q-nome" autocomplete="given-name" maxlength="40" placeholder="Primeiro nome"></div>
+
+    <div class="row2">
+      <div class="field"><label for="q-idade">Idade</label><input type="number" id="q-idade" inputmode="numeric" min="18" max="90"></div>
+      <div class="field"><label for="q-dep">Filhos ou dependentes</label><input type="number" id="q-dep" inputmode="numeric" min="0" max="10" value="0"></div>
+    </div>
+
+    <fieldset id="g-familia"><legend>Situação familiar</legend><div class="opts" id="o-familia"></div></fieldset>
+    <fieldset id="g-trab"><legend>O que faz profissionalmente?</legend><div class="opts" id="o-trab"></div></fieldset>
+    <div class="field"><label for="q-prof">Profissão (opcional)</label><input type="text" id="q-prof" maxlength="60" placeholder="Ex.: enfermeira, eletricista, motorista de pesados"></div>
+
+    <div class="field"><label for="q-rend">Rendimento mensal líquido (o seu)</label><select id="q-rend"></select></div>
+    <fieldset id="g-contrib"><legend>Que parte do rendimento da casa assegura?</legend><div class="opts" id="o-contrib"></div></fieldset>
+
+    <fieldset id="g-hab"><legend>Habitação</legend><div class="opts" id="o-hab"></div></fieldset>
+    <div class="field" id="f-divida" hidden><label for="q-divida">Quanto falta pagar do crédito da casa?</label><select id="q-divida"></select></div>
+
+    <fieldset id="g-carro"><legend>Tem automóvel?</legend><div class="opts" id="o-carro"></div></fieldset>
+    <fieldset><legend>Que seguros já tem?</legend><p class="hint">Aqui ou noutra seguradora. Pode escolher vários.</p><div class="opts" id="o-has"></div></fieldset>
+
+    <fieldset><legend>Algum dos seus seguros renova nos próximos 3 meses? (opcional)</legend><div class="opts" id="o-renova"></div></fieldset>
+    <div class="field"><label for="q-quando">Melhor altura para o contactar (opcional)</label><select id="q-quando"><option value="">Indiferente</option><option>Manhã</option><option>Hora de almoço</option><option>Fim da tarde</option><option>À noite</option></select></div>
+
+    <fieldset><legend>Quer receber uma sugestão personalizada? (opcional)</legend>
+      <div class="field"><label for="q-tel">Telemóvel</label><input type="tel" id="q-tel" inputmode="tel" autocomplete="tel" placeholder="912 345 678"></div>
+      <label class="opt"><input type="checkbox" id="q-cons"><span class="lab">Autorizo ser contactado(a) sobre proteção e seguros</span></label>
+    </fieldset>
+
+    <p class="err" id="err" role="alert"></p>
+    <button class="btn" type="submit">Ver o resultado</button>
+  </form>
+
+  <section class="card result" id="res" hidden aria-live="polite"></section>
+</main>
+
+<script>
+(function () {
+  /* Número de contacto com indicativo e só dígitos, por exemplo 351912345678.
+     Enquanto estiver vazio, a página funciona em modo de pré-visualização. */
+  var WA = '351963746662';
+  /* Identificação de quem responde, para o cliente ver que é verdade. */
+  var NOME = 'Joana Pereira';
+  var EMAIL = 'joanapereira.protecao@gmail.com';
+  var ROLE = 'Proteção Financeira';
+
+  var $ = function (s) { return document.querySelector(s); };
+  var eur0 = new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+
+  var FAM = [['solteiro', 'Solteiro(a)'], ['casal', 'Casal, sem filhos'], ['casal_filhos', 'Casal com filhos'], ['monoparental', 'Família monoparental']];
+  var TRAB = [['outrem', 'Por conta de outrem'], ['independente', 'Independente ou empresário']];
+  var CONTRIB = [['maior', 'A maior parte'], ['metade', 'Cerca de metade'], ['menos', 'Menos de metade']];
+  var HAB = [['arrendada', 'Arrendada'], ['credito', 'Própria, com crédito'], ['propria', 'Própria, sem crédito']];
+  var CARRO = [['1', 'Sim'], ['0', 'Não']];
+  var HAS = [['vida_credito', 'Vida do crédito'], ['vida_risco', 'Vida (proteção da família)'], ['multirriscos', 'Multirriscos da casa'], ['saude', 'Saúde'], ['acidentes', 'Acidentes pessoais'], ['rendimento', 'Proteção de rendimento'], ['auto', 'Automóvel'], ['ppr', 'Poupança reforma (PPR)']];
+  var REND = [['Até 1 000 €', 800], ['1 000 a 1 500 €', 1250], ['1 500 a 2 500 €', 2000], ['2 500 a 4 000 €', 3250], ['Mais de 4 000 €', 4500]];
+  var DIV = [['Até 50 000 €', 35000], ['50 000 a 100 000 €', 75000], ['100 000 a 150 000 €', 125000], ['150 000 a 250 000 €', 200000], ['Mais de 250 000 €', 300000]];
+  var FACTOR = { maior: 1, metade: 0.6, menos: 0.35 };
+  var PRIO = { alta: 3, media: 2, baixa: 1 };
+
+  function radios(id, name, opts) {
+    $('#' + id).innerHTML = opts.map(function (o, i) {
+      return '<label class="opt"><input type="radio" name="' + name + '" value="' + o[0] + '"><span class="lab">' + o[1] + '</span></label>';
+    }).join('');
+  }
+  radios('o-familia', 'familia', FAM);
+  radios('o-trab', 'trab', TRAB);
+  radios('o-contrib', 'contrib', CONTRIB);
+  radios('o-hab', 'hab', HAB);
+  radios('o-carro', 'carro', CARRO);
+  radios('o-renova', 'renova', CARRO);
+  $('#o-has').innerHTML = HAS.map(function (h) {
+    return '<label class="opt"><input type="checkbox" name="has" value="' + h[0] + '"><span class="lab">' + h[1] + '</span></label>';
+  }).join('');
+  $('#q-rend').innerHTML = '<option value="">Escolha uma faixa</option>' + REND.map(function (r, i) { return '<option value="' + i + '">' + r[0] + '</option>'; }).join('');
+  $('#q-divida').innerHTML = '<option value="">Escolha uma faixa</option>' + DIV.map(function (r, i) { return '<option value="' + i + '">' + r[0] + '</option>'; }).join('');
+
+  if (NOME) {
+    $('#who').innerHTML = '<b>' + NOME + '</b> · ' + ROLE + '<br>Para confirmar que é verdade, pode escrever-me para ' + (EMAIL ? '<a href="mailto:' + EMAIL + '">' + EMAIL + '</a>' : 'o email profissional') + '.';
+    $('#who').hidden = false;
+  }
+  if (!WA || !NOME || !EMAIL) $('#preview').hidden = false;
+
+  var val = function (name) { var el = document.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : ''; };
+  var label = function (arr, v) { var f = arr.filter(function (x) { return x[0] === v; })[0]; return f ? f[1] : ''; };
+
+  document.querySelectorAll('input[name="hab"]').forEach(function (r) {
+    r.addEventListener('change', function () { $('#f-divida').hidden = val('hab') !== 'credito'; });
+  });
+
+  function profile() {
+    var has = {};
+    document.querySelectorAll('input[name="has"]:checked').forEach(function (c) { has[c.value] = true; });
+    var rIdx = $('#q-rend').value, dIdx = $('#q-divida').value;
+    return {
+      nome: $('#q-nome').value.trim(), prof: $('#q-prof').value.trim(), mot: /motorista|camion|pesados|\btir\b|transportador/i.test($('#q-prof').value), renova: val('renova'), quando: $('#q-quando').value, tel: $('#q-tel').value.trim(), cons: $('#q-cons').checked,
+      idade: parseInt($('#q-idade').value, 10) || 0,
+      dep: Math.max(0, Math.min(10, parseInt($('#q-dep').value, 10) || 0)),
+      familia: val('familia'), trab: val('trab'), contrib: val('contrib'), hab: val('hab'), carro: val('carro') === '1',
+      rendIdx: rIdx === '' ? -1 : +rIdx, divIdx: dIdx === '' ? -1 : +dIdx,
+      rend: rIdx === '' ? 0 : REND[+rIdx][1], divida: dIdx === '' ? 0 : DIV[+dIdx][1], has: has
+    };
+  }
+
+  function items(p) {
+    var out = [];
+    var cred = p.hab === 'credito', own = p.hab !== 'arrendada';
+    var dep = p.dep > 0, indep = p.trab === 'independente', mot = p.mot;
+    var family = dep || p.familia === 'casal' || p.familia === 'casal_filhos' || p.familia === 'monoparental';
+    if (cred) out.push({ id: 'credito', nome: 'Proteção do crédito', prio: 'alta', covered: !!p.has.vida_credito, porque: 'Garante que a dívida ao banco fica paga se algo lhe acontecer.' });
+    if (family) out.push({ id: 'vida_risco', nome: 'Proteção da família', prio: (dep && p.contrib !== 'menos') ? 'alta' : 'media', covered: !!p.has.vida_risco,
+      porque: cred ? 'O seguro do crédito paga ao banco, não à sua família. Se o rendimento deixar de entrar, as despesas do dia a dia continuam.' : 'Se o rendimento deixar de entrar, as despesas continuam. Um capital dá tempo à família para se reorganizar.' });
+    out.push({ id: 'multirriscos', nome: own ? 'Seguro da casa' : 'Recheio e responsabilidade civil', prio: own ? 'alta' : 'media', covered: !!p.has.multirriscos,
+      porque: own ? 'A casa é o maior património da família. Incêndio, água ou sismo sem cobertura podem custar dezenas de milhares de euros.' : 'O senhorio segura o prédio, mas não o seu recheio nem os danos que cause a terceiros.' });
+    out.push({ id: 'saude', nome: 'Seguro de saúde', prio: indep ? 'alta' : 'media', covered: !!p.has.saude,
+      porque: indep ? 'Sem entidade empregadora, cada semana de espera por consulta ou cirurgia é rendimento perdido.' : 'Acesso mais rápido a consultas, exames e cirurgias, para si e para a família.' });
+    if (indep || p.contrib === 'maior') out.push({ id: 'rendimento', nome: 'Proteção do rendimento em caso de baixa', prio: indep ? 'alta' : 'media', covered: !!p.has.rendimento,
+      porque: 'Uma baixa prolongada reduz o rendimento. O subsídio de doença cobre apenas parte dele e tem prazo de espera.' });
+    out.push({ id: 'acidentes', nome: mot ? 'Acidentes pessoais e invalidez' : 'Acidentes pessoais', prio: mot ? 'alta' : (dep ? 'media' : 'baixa'), covered: !!p.has.acidentes,
+      porque: mot ? 'O seguro de acidentes de trabalho cobre o trabalho, com valores definidos por lei. Não cobre a doença nem os acidentes fora do trabalho.' : 'O seguro de acidentes de trabalho só cobre o horário e o local de trabalho. Desporto, lazer e casa ficam de fora.' });
+    if (p.carro) out.push({ id: 'auto', nome: 'Seguro automóvel', prio: 'alta', covered: !!p.has.auto, porque: 'A responsabilidade civil é obrigatória por lei. Vale a pena comparar também as restantes coberturas.' });
+    if (p.idade >= 25 && p.idade <= 60) out.push({ id: 'ppr', nome: 'Poupança para a reforma', prio: p.idade >= 40 ? 'media' : 'baixa', covered: !!p.has.ppr, porque: 'A pensão pública costuma ficar abaixo do rendimento em atividade. Quanto mais cedo se começa, menor é o esforço mensal.' });
+    return out;
+  }
+
+  function capital(p) {
+    var anos = p.dep > 0 ? Math.min(10, 3 + 2 * p.dep) : 3;
+    return Math.max(10000, Math.round(p.rend * 12 * anos * FACTOR[p.contrib] / 5000) * 5000);
+  }
+
+  function message(p, its, pct) {
+    var ids = Object.keys(p.has);
+    var L = [];
+    L.push('Olá, respondi ao questionário da proteção familiar.');
+    if (p.nome) L.push('Nome: ' + p.nome);
+    L.push('Idade: ' + p.idade + ' anos');
+    L.push('Família: ' + label(FAM, p.familia).toLowerCase() + (p.dep ? ' (' + p.dep + (p.dep === 1 ? ' dependente)' : ' dependentes)') : ''));
+    L.push('Trabalho: ' + label(TRAB, p.trab).toLowerCase() + (p.prof ? ' (' + p.prof + ')' : ''));
+    L.push('Rendimento mensal líquido: ' + REND[p.rendIdx][0] + ' (' + label(CONTRIB, p.contrib).toLowerCase() + ' do rendimento da casa)');
+    L.push('Habitação: ' + label(HAB, p.hab).toLowerCase() + (p.hab === 'credito' && p.divIdx >= 0 ? ' (falta pagar ' + DIV[p.divIdx][0] + ')' : ''));
+    L.push('Automóvel: ' + (p.carro ? 'sim' : 'não'));
+    L.push('Seguros que já tenho: ' + (ids.length ? ids.map(function (i) { return label(HAS, i).toLowerCase(); }).join(', ') : 'nenhum'));
+    if (p.tel) L.push('Telemóvel: ' + p.tel + ' (autorizou o contacto)');
+    if (p.renova) L.push('Algum seguro renova nos próximos 3 meses: ' + (p.renova === '1' ? 'sim' : 'não'));
+    if (p.quando) L.push('Melhor altura para contactar: ' + p.quando.toLowerCase());
+    L.push('Nível de proteção que me apareceu: ' + pct + '/100');
+    L.push('');
+    L.push('Código de análise (não apagar): v1|' + [p.idade, p.familia, p.dep, p.mot ? 'motorista' : p.trab, p.rend, p.contrib, p.hab, p.hab === 'credito' ? p.divida : 0, p.carro ? 1 : 0, ids.length ? ids.join(',') : '-'].join('|'));
+    return L.join('\n');
+  }
+
+  $('#f').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var p = profile(), miss = [];
+    if (p.idade < 18 || p.idade > 90) miss.push('a idade');
+    if (!p.familia) miss.push('a situação familiar');
+    if (!p.trab) miss.push('a situação profissional');
+    if (p.rendIdx < 0) miss.push('o rendimento');
+    if (!p.contrib) miss.push('a parte do rendimento da casa');
+    if (!p.hab) miss.push('a habitação');
+    if (p.hab === 'credito' && p.divIdx < 0) miss.push('quanto falta pagar do crédito');
+    if (val('carro') === '') miss.push('se tem automóvel');
+    if (p.tel && !p.cons) miss.push('a autorização para o contactarmos');
+    $('#err').textContent = miss.length ? 'Falta indicar: ' + miss.join(', ') + '.' : '';
+    if (miss.length) return;
+
+    var its = items(p), total = 0, got = 0;
+    its.forEach(function (i) { total += PRIO[i.prio]; if (i.covered) got += PRIO[i.prio]; });
+    var pct = total ? Math.round(got / total * 100) : 100;
+    var gaps = its.filter(function (i) { return !i.covered; }).sort(function (a, b) { return PRIO[b.prio] - PRIO[a.prio]; });
+    var covered = its.filter(function (i) { return i.covered; }).length;
+    var vr = its.filter(function (i) { return i.id === 'vida_risco' && !i.covered; })[0];
+
+    var h = '<h2>O seu resultado</h2>' +
+      '<div class="score"><b>' + pct + '</b><span>em 100: <strong>' + (pct < 40 ? 'proteção baixa' : pct < 70 ? 'proteção parcial' : 'proteção boa') + '</strong>, com base nas suas respostas</span></div>' +
+      '<div class="meter" role="img" aria-label="Nível de proteção ' + pct + ' em 100"><span style="width:' + pct + '%"></span></div>';
+    if (gaps.length) {
+      h += '<div><h3 style="font-size:1rem;font-weight:600;margin-bottom:10px">Pontos a rever</h3><div style="display:grid;gap:12px">' +
+        gaps.slice(0, 3).map(function (g) { return '<div class="pt"><b>' + g.nome + '</b><span>' + g.porque + '</span></div>'; }).join('') + '</div></div>';
+    } else {
+      h += '<p>Não encontrámos pontos por rever. Vale a pena confirmar capitais e datas de renovação.</p>';
+    }
+    if (vr) h += '<p class="cap">Estimativa orientativa do capital que a sua família precisaria: <b>' + eur0.format(capital(p)) + '</b>. Valor ilustrativo, que depende da avaliação das suas necessidades e das condições da apólice.</p>';
+    h += '<p class="fine">Já tem ' + covered + ' de ' + its.length + ' proteções relevantes para o seu perfil. O nível dá mais peso às proteções mais importantes.</p>';
+
+    var msg = message(p, its, pct);
+    h += '<div class="send"><h3 style="font-size:1rem;font-weight:600">Quer uma sugestão?</h3><p class="fine">Envie as respostas por mensagem e receberá uma proposta, sem compromisso. Ao enviar, autoriza o contacto sobre estes temas.</p>' +
+      '<a class="btn" id="wa" target="_blank" rel="noopener noreferrer"' + (WA ? ' href="https://wa.me/' + WA + '?text=' + encodeURIComponent(msg) + '"' : ' aria-disabled="true"') + '>Enviar por WhatsApp</a>' +
+      '<button class="btn ghost" type="button" id="cp">Copiar respostas</button>' +
+      '<textarea class="copybox" id="cb" readonly hidden aria-label="Respostas para copiar"></textarea></div>';
+    var res = $('#res');
+    res.innerHTML = h;
+    res.hidden = false;
+    $('#cp').addEventListener('click', function () {
+      var btn = $('#cp'), box = $('#cb'), lab = btn.textContent;
+      var done = function () { btn.textContent = 'Copiado'; setTimeout(function () { btn.textContent = lab; }, 1600); };
+      var fb = function () { box.hidden = false; box.value = msg; box.focus(); box.select(); };
+      try { navigator.clipboard.writeText(msg).then(done, fb); } catch (err) { fb(); }
+    });
+    res.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+})();
+</script>
+</body>
+</html>
