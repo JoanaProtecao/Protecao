@@ -53,9 +53,6 @@ h2 { font-size: 1.15rem; font-weight: 600; }
 .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 14px; }
 .cols ul { margin: 6px 0 0; padding-left: 1.1em; display: grid; gap: 3px; font-size: .9rem; color: var(--muted); }
 .cols strong { font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; }
-.who { border-left: 4px solid var(--accent); padding: 4px 0 4px 14px; font-size: .92rem; color: var(--muted); }
-.who b { color: var(--ink); font-weight: 600; }
-.who a { color: var(--accent-ink); font-weight: 600; word-break: break-all; }
 .preview { background: var(--warn-soft); color: var(--ink); border-radius: 10px; padding: 12px 14px; font-size: .88rem; }
 
 form { display: grid; gap: 26px; }
@@ -101,10 +98,8 @@ input[type="text"], input[type="tel"], input[type="number"], select { font: inhe
   <header>
     <p class="eyebrow">Joana Pereira | Proteção Financeira</p>
     <h1>A conta da sua família</h1>
-    <p class="lede">Responda em menos de 2 minutos. No fim vê o que pode ficar por proteger e pode enviar as respostas por mensagem para receber uma sugestão.</p>
+    <p class="lede">Responda em menos de 2 minutos. No fim, veja o nível de proteção que tem. Envie as respostas para receber uma sugestão.</p>
   </header>
-
-  <p class="who" id="who" hidden></p>
 
   <div class="preview" id="preview" hidden>Pré-visualização: faltam o número de WhatsApp, o nome ou o email de contacto para a página ficar completa.</div>
 
@@ -194,11 +189,7 @@ input[type="text"], input[type="tel"], input[type="number"], select { font: inhe
   $('#q-rend').innerHTML = '<option value="">Escolha uma faixa</option>' + REND.map(function (r, i) { return '<option value="' + i + '">' + r[0] + '</option>'; }).join('');
   $('#q-divida').innerHTML = '<option value="">Escolha uma faixa</option>' + DIV.map(function (r, i) { return '<option value="' + i + '">' + r[0] + '</option>'; }).join('');
 
-  if (NOME) {
-    $('#who').innerHTML = '<b>' + NOME + '</b> · ' + ROLE + '<br>Para confirmar que é verdade, pode escrever-me para ' + (EMAIL ? '<a href="mailto:' + EMAIL + '">' + EMAIL + '</a>' : 'o email profissional') + '.';
-    $('#who').hidden = false;
-  }
-  if (!WA || !NOME || !EMAIL) $('#preview').hidden = false;
+  if (!WA) $('#preview').hidden = false;
 
   var val = function (name) { var el = document.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : ''; };
   var label = function (arr, v) { var f = arr.filter(function (x) { return x[0] === v; })[0]; return f ? f[1] : ''; };
@@ -264,7 +255,7 @@ input[type="text"], input[type="tel"], input[type="number"], select { font: inhe
     if (p.quando) L.push('Melhor altura para contactar: ' + p.quando.toLowerCase());
     L.push('Nível de proteção que me apareceu: ' + pct + '/100');
     L.push('');
-    L.push('Código de análise (não apagar): v1|' + [p.idade, p.familia, p.dep, p.mot ? 'motorista' : p.trab, p.rend, p.contrib, p.hab, p.hab === 'credito' ? p.divida : 0, p.carro ? 1 : 0, ids.length ? ids.join(',') : '-'].join('|'));
+    L.push('Referência (por favor, mantenha esta linha): v1|' + [p.idade, p.familia, p.dep, p.mot ? 'motorista' : p.trab, p.rend, p.contrib, p.hab, p.hab === 'credito' ? p.divida : 0, p.carro ? 1 : 0, ids.length ? ids.join(',') : '-'].join('|'));
     return L.join('\n');
   }
 
